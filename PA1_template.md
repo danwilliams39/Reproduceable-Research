@@ -1,22 +1,21 @@
-# Reproduceable Research
+---
+title: "Reproduceable Research"
+output: 
+  html_document: 
+    keep_md: yes
+---
 
-
+```{r, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
 
 ### Loading and formatting the data
 
 To load the document, first set the working directory to where the csv file is saved, then call the read.csv function
 
-
-```r
+```{r, echo=TRUE}
 #Need to set the working directory to where the "activity.csv" file is saved
 library("ggplot2")
-```
-
-```
-## Warning: package 'ggplot2' was built under R version 3.2.4
-```
-
-```r
 library("gridExtra")
 setwd("C:/Users/daniel.williams/Documents/R/Class 5")
 dataset=read.csv("activity.csv")
@@ -27,58 +26,29 @@ dataset[,"date"]=as.Date(dataset[,"date"],"%Y-%m-%d")
 
 To determine the total number of steps per day we can call the aggregate function by date.
 
-
-```r
+```{r, echo=TRUE}
 ## Mean Steps Per Day
 mean.day=aggregate(steps~date,data=dataset,FUN=sum)
 mean(mean.day[,2])
-```
-
-```
-## [1] 10766.19
-```
-
-```r
 ## Median Steps Per Day
 median(mean.day[,2])
-```
-
-```
-## [1] 10765
-```
-
-```r
 ## Histogram of Steps Per Day
 qplot(mean.day$steps,geom="histogram",bins=25,main="Histogram of Steps/Day",xlab="Steps",fill=I("forestgreen"),col=I('navy'))
 ```
 
-![](PA1_template_files/figure-html/unnamed-chunk-3-1.png) 
-
 ### Q: What is the average daily activity pattern?
 
-
-```r
+```{r, echo=TRUE}
 ## Plot of 5 Minute Intervals
 mean.pattern=aggregate(steps~interval,data = dataset, FUN=mean)
 ggplot(data=mean.pattern,aes(x=interval,y=steps))+geom_line(size=1.5,aes(colour=I("forestgreen")))+labs(title="Average Steps/5 Minute Interval")
-```
-
-![](PA1_template_files/figure-html/unnamed-chunk-4-1.png) 
-
-```r
 ## Interval with maximum number of steps:
 mean.pattern[mean.pattern[,2]==max(mean.pattern[,2]),]
 ```
 
-```
-##     interval    steps
-## 104      835 206.1698
-```
-
 ### Q: Imputing Missing Values
 
-
-```r
+```{r,echo=TRUE}
 ## Create new column for average/interval
 new.dataset=merge(dataset,mean.pattern,by="interval")
 names(new.dataset)=c("interval","steps","date","avg steps")
@@ -96,26 +66,10 @@ new.dataset=new.dataset[,-4]
 mean.day.2=aggregate(steps~date,data=new.dataset,FUN=sum)
 ## Create new histogram
 qplot(mean.day.2$steps,geom="histogram",bins=25,main="Histogram of Steps/Day",xlab="Steps",fill=I("forestgreen"),col=I('navy'))
-```
-
-![](PA1_template_files/figure-html/unnamed-chunk-5-1.png) 
-
-```r
 ## New Mean
 mean(mean.day.2[,2])
-```
-
-```
-## [1] 10766.19
-```
-
-```r
 ## New Median
 median(mean.day.2[,2])
-```
-
-```
-## [1] 10766.19
 ```
 The mean remains the same but the median is now the same value as the mean since we have replaced all missing values with the means from that interval.
 
@@ -126,8 +80,7 @@ Inputing the missing data increased the overall number of steps per day.
 
 First we need to create a new factor variable for weekend/weekdays
 
-
-```r
+```{r}
 for(i in 1:nrow(new.dataset)){
   
 if(weekdays(new.dataset[i,"date"])=="Saturday"| weekdays(new.dataset[i,"date"])=="Sunday") {
@@ -152,7 +105,5 @@ plot.wkdays=ggplot(data=wkdays.pattern,aes(x=interval,y=steps))+geom_line(size=1
 plot.wkends=ggplot(data=wkends.pattern,aes(x=interval,y=steps))+geom_line(size=1.5,aes(colour=I("forestgreen")))+labs(title="Weekends Average Steps/5 Minute Interval")
 grid.arrange(plot.wkdays,plot.wkends)
 ```
-
-![](PA1_template_files/figure-html/unnamed-chunk-6-1.png) 
 
 
