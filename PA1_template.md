@@ -52,7 +52,7 @@ median(mean.day[,2])
 qplot(mean.day$steps,geom="histogram",bins=25,main="Histogram of Steps/Day",xlab="Steps",fill=I("forestgreen"),col=I('navy'))
 ```
 
-![](PA1_template_files/figure-html/unnamed-chunk-3-1.png) 
+Reproduceable-Research/unnamed-chunk-3-1.png
 
 ### Q: What is the average daily activity pattern?
 
